@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}MusicMarket{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="nav-brand" href="{{ url_for('products.index') }}">🎸 MusicMarket</a>
+  <div class="nav-links">
+    <a href="{{ url_for('products.index') }}">Browse</a>
+    {% if current_user.is_authenticated %}
+      {% if current_user.role == 'customer' %}
+        <a href="{{ url_for('cart.view') }}">🛒 Cart</a>
+        <a href="{{ url_for('orders.history') }}">My Orders</a>
+      {% elif current_user.role == 'seller' %}
+        <a href="{{ url_for('seller.dashboard') }}">Seller Dashboard</a>
+      {% elif current_user.role == 'admin' %}
+        <a href="{{ url_for('admin.dashboard') }}">Admin Panel</a>
+      {% endif %}
+      <span class="nav-user">{{ current_user.name }}</span>
+      <a href="{{ url_for('auth.logout') }}">Logout</a>
+    {% else %}
+      <a href="{{ url_for('auth.login') }}">Login</a>
+      <a href="{{ url_for('auth.register') }}" class="btn-primary">Register</a>
+    {% endif %}
+  </div>
+</nav>
+
+<div class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</div>
+
+<footer>
+  <p>MusicMarket &copy; 2026 · CS 2712 Software Design Project</p>
+</footer>
+
+</body>
+</html>

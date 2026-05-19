@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Browse Instruments · MusicMarket{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Musical Instruments &amp; Accessories</h1>
+  <p>Discover instruments from verified sellers</p>
+</div>
+
+<form class="search-bar" method="GET" action="{{ url_for('products.index') }}">
+  <input type="text" name="q" value="{{ search }}" placeholder="Search instruments..."/>
+  <select name="category">
+    <option value="">All Categories</option>
+    {% for cat in categories %}
+      <option value="{{ cat.category_id }}"
+        {% if selected_category == cat.category_id %}selected{% endif %}>
+        {{ cat.name }}
+      </option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn-primary">Search</button>
+  {% if search or selected_category %}
+    <a href="{{ url_for('products.index') }}" class="btn-secondary">Clear</a>
+  {% endif %}
+</form>
+
+{% if products %}
+  <div class="product-grid">
+    {% for product in products %}
+      <div class="product-card">
+        <div class="product-category">{{ product.category.name }}</div>
+        <h3>{{ product.name }}</h3>
+        <p class="product-desc">{{ product.description[:80] }}{% if product.description and product.description|length > 80 %}...{% endif %}</p>
+        <div class="product-meta">
+          <span class="price">${{ "%.2f"|format(product.price) }}</span>
+          <span class="stock {% if product.stock_quantity == 0 %}out{% endif %}">
+            {% if product.stock_quantity > 0 %}{{ product.stock_quantity }} in stock{% else %}Out of stock{% endif %}
+          </span>
+        </div>
+        <a href="{{ url_for('products.detail', product_id=product.product_id) }}" class="btn-primary">View Details</a>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty-state">
+    <p>No products found{% if search %} for "{{ search }}"{% endif %}.</p>
+  </div>
+{% endif %}
+
+{% endblock %}

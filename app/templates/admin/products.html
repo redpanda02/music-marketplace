@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Product Oversight · Admin{% endblock %}
+{% block content %}
+
+<h1>Product Oversight</h1>
+<a href="{{ url_for('admin.dashboard') }}" class="btn-secondary">← Dashboard</a>
+
+<table class="order-table" style="margin-top:1rem">
+  <thead>
+    <tr><th>Product</th><th>Seller</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for product in products %}
+    <tr>
+      <td>{{ product.name }}</td>
+      <td>{{ product.seller.user.name if product.seller and product.seller.user else '—' }}</td>
+      <td>${{ "%.2f"|format(product.price) }}</td>
+      <td>{{ product.stock_quantity }}</td>
+      <td>
+        <span class="status-badge {% if product.is_active %}status-confirmed{% else %}status-cancelled{% endif %}">
+          {% if product.is_active %}Active{% else %}Inactive{% endif %}
+        </span>
+      </td>
+      <td>
+        {% if product.is_active %}
+          <form method="POST" action="{{ url_for('admin.deactivate_product', product_id=product.product_id) }}" style="display:inline">
+            <button type="submit" class="btn-danger-small"
+                    onclick="return confirm('Deactivate this product?')">Deactivate</button>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

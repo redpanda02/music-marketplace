@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Seller Dashboard · MusicMarket{% endblock %}
+{% block content %}
+
+<div class="dashboard-header">
+  <h1>Seller Dashboard</h1>
+  {% if current_user.is_approved_seller() %}
+    <a href="{{ url_for('seller.add_product') }}" class="btn-primary">+ Add Product</a>
+    <a href="{{ url_for('seller.sales') }}" class="btn-secondary">My Sales</a>
+  {% endif %}
+</div>
+
+{% if not current_user.is_approved_seller() %}
+  <div class="alert alert-warning">
+    ⏳ Your seller account is <strong>pending approval</strong> by an administrator.
+    You will be able to list products once approved.
+  </div>
+{% endif %}
+
+{% if products %}
+  <table class="order-table">
+    <thead>
+      <tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>{{ product.name }}</td>
+        <td>{{ product.category.name }}</td>
+        <td>${{ "%.2f"|format(product.price) }}</td>
+        <td>{{ product.stock_quantity }}</td>
+        <td>
+          <span class="status-badge {% if product.is_active %}status-confirmed{% else %}status-cancelled{% endif %}">
+            {% if product.is_active %}Active{% else %}Inactive{% endif %}
+          </span>
+        </td>
+        <td>
+          <a href="{{ url_for('seller.edit_product', product_id=product.product_id) }}" class="btn-small">Edit</a>
+          {% if product.is_active %}
+            <form method="POST" action="{{ url_for('seller.delete_product', product_id=product.product_id) }}" style="display:inline">
+              <button type="submit" class="btn-danger-small"
+                      onclick="return confirm('Remove this product?')">Remove</button>
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="empty-state">
+    <p>You haven't listed any products yet.</p>
+  </div>
+{% endif %}
+
+{% endblock %}

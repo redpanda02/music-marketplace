@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Add Product · MusicMarket{% endblock %}
+{% block content %}
+
+<div class="form-card">
+  <h2>Add New Product</h2>
+  <form method="POST" action="{{ url_for('seller.add_product') }}">
+    <div class="form-group">
+      <label>Product Name *</label>
+      <input type="text" name="name" required placeholder="e.g. Fender Stratocaster"/>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea name="description" rows="4" placeholder="Describe your instrument..."></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price ($) *</label>
+        <input type="number" name="price" step="0.01" min="0.01" required placeholder="0.00"/>
+      </div>
+      <div class="form-group">
+        <label>Stock Quantity *</label>
+        <input type="number" name="stock_quantity" min="0" required placeholder="0"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Category *</label>
+      <select name="category_id" required>
+        <option value="">Select a category</option>
+        {% for cat in categories %}
+          <option value="{{ cat.category_id }}">{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">List Product</button>
+      <a href="{{ url_for('seller.dashboard') }}" class="btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

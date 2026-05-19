@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} · MusicMarket{% endblock %}
+{% block content %}
+<div>
+  <a href="{{ url_for('products.index') }}" class="btn-secondary">← Dashboard</a>
+</div>
+<div class="detail-layout">
+  <div class="detail-info">
+    <div class="breadcrumb">
+      <a href="{{ url_for('products.index') }}">Browse</a> &rsaquo;
+      {{ product.category.name }} &rsaquo; {{ product.name }}
+    </div>
+    <h1>{{ product.name }}</h1>
+    <div class="detail-meta">
+      <span class="price large">${{ "%.2f"|format(product.price) }}</span>
+      <span class="badge">{{ product.category.name }}</span>
+    </div>
+    <p class="detail-desc">{{ product.description or "No description provided." }}</p>
+
+    <div class="seller-info">
+      <strong>Sold by:</strong>
+      {{ product.seller.user.name if product.seller and product.seller.user else "Unknown" }}
+    </div>
+
+    <div class="stock-info">
+      {% if product.stock_quantity > 0 %}
+        <span class="stock-ok">✓ {{ product.stock_quantity }} in stock</span>
+      {% else %}
+        <span class="stock-out">✗ Out of stock</span>
+      {% endif %}
+    </div>
+
+    {% if current_user.is_authenticated and current_user.role == 'customer' %}
+      {% if product.is_available() %}
+        <form action="{{ url_for('cart.add', product_id=product.product_id) }}" method="POST">
+          <div class="qty-row">
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" value="1"
+                   min="1" max="{{ product.stock_quantity }}" />
+            <button type="submit" class="btn-primary">Add to Cart 🛒</button>
+          </div>
+        </form>
+      {% else %}
+        <p class="unavailable">This product is currently unavailable.</p>
+      {% endif %}
+    {% elif not current_user.is_authenticated %}
+      <p><a href="{{ url_for('auth.login') }}">Log in</a> to add this item to your cart.</p>
+    {% endif %}
+  </div>
+</div>
+
+
+{% endblock %}

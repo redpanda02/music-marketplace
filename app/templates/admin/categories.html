@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Categories · Admin{% endblock %}
+{% block content %}
+
+<h1>Category Management</h1>
+<a href="{{ url_for('admin.dashboard') }}" class="btn-secondary">← Dashboard</a>
+
+<div class="form-card" style="margin-top:1rem">
+  <h3>Add Category</h3>
+  <form method="POST" action="{{ url_for('admin.add_category') }}" class="inline-form">
+    <input type="text" name="name" required placeholder="Category name"/>
+    <button type="submit" class="btn-primary">Add</button>
+  </form>
+</div>
+
+<table class="order-table" style="margin-top:1rem">
+  <thead>
+    <tr><th>Category</th><th>Products</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for cat in categories %}
+    <tr>
+      <td>{{ cat.name }}</td>
+      <td>{{ cat.products|length }}</td>
+      <td>
+        <form method="POST" action="{{ url_for('admin.rename_category', category_id=cat.category_id) }}" style="display:inline">
+          <input type="text" name="name" placeholder="New name" style="width:120px"/>
+          <button type="submit" class="btn-small">Rename</button>
+        </form>
+        <form method="POST" action="{{ url_for('admin.delete_category', category_id=cat.category_id) }}" style="display:inline">
+          <button type="submit" class="btn-danger-small"
+                  onclick="return confirm('Delete this category?')">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="3">No categories yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

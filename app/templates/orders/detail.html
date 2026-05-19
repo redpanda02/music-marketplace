@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.order_id }} · MusicMarket{% endblock %}
+{% block content %}
+
+<div class="order-detail">
+  <div class="order-header">
+    <h1>Order #{{ order.order_id }}</h1>
+    <span class="status-badge status-{{ order.status }}">{{ order.status|capitalize }}</span>
+  </div>
+
+  <div class="order-meta">
+    <span>Placed: {{ order.order_date[:10] }}</span>
+  </div>
+
+  <table class="order-table">
+    <thead>
+      <tr><th>Product</th><th>Qty</th><th>Price (at purchase)</th><th>Subtotal</th></tr>
+    </thead>
+    <tbody>
+      {% for item in order.items %}
+      <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>${{ "%.2f"|format(item.price) }}</td>
+        <td>${{ "%.2f"|format(item.get_subtotal()) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3"><strong>Total</strong></td>
+        <td><strong>${{ "%.2f"|format(order.total_amount) }}</strong></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  {% if order.status in ('pending', 'confirmed') %}
+    <form method="POST" action="{{ url_for('orders.cancel', order_id=order.order_id) }}">
+      <button type="submit" class="btn-danger"
+              onclick="return confirm('Cancel this order?')">Cancel Order</button>
+    </form>
+  {% endif %}
+
+  <a href="{{ url_for('orders.history') }}" class="btn-secondary">Back to Orders</a>
+</div>
+
+{% endblock %}

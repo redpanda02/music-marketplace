@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Seller Approvals · Admin{% endblock %}
+{% block content %}
+
+<h1>Seller Management</h1>
+<a href="{{ url_for('admin.dashboard') }}" class="btn-secondary">← Dashboard</a>
+
+<table class="order-table" style="margin-top:1rem">
+  <thead>
+    <tr><th>Name</th><th>Email</th><th>Status</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for seller in sellers %}
+    <tr>
+      <td>{{ seller.user.name }}</td>
+      <td>{{ seller.user.email }}</td>
+      <td>
+        <span class="status-badge {% if seller.is_approved %}status-confirmed{% else %}status-pending{% endif %}">
+          {% if seller.is_approved %}Approved{% else %}Pending{% endif %}
+        </span>
+      </td>
+      <td>
+        {% if not seller.is_approved %}
+          <form method="POST" action="{{ url_for('admin.approve_seller', seller_id=seller.seller_id) }}" style="display:inline">
+            <button type="submit" class="btn-small">Approve</button>
+          </form>
+        {% else %}
+          <form method="POST" action="{{ url_for('admin.reject_seller', seller_id=seller.seller_id) }}" style="display:inline">
+            <button type="submit" class="btn-danger-small"
+                    onclick="return confirm('Revoke approval for this seller?')">Revoke</button>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4">No sellers registered yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

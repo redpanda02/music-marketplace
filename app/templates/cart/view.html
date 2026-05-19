@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Your Cart · MusicMarket{% endblock %}
+{% block content %}
+
+<h1>Your Cart</h1>
+
+{% if cart.items %}
+  <div class="cart-layout">
+    <table class="cart-table">
+      <thead>
+        <tr>
+          <th>Product</th><th>Price</th><th>Quantity</th><th>Subtotal</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart.items %}
+        <tr>
+          <td>
+            <a href="{{ url_for('products.detail', product_id=item.product.product_id) }}">
+              {{ item.product.name }}
+            </a>
+          </td>
+          <td>${{ "%.2f"|format(item.product.price) }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('cart.update', cart_item_id=item.cart_item_id) }}" class="qty-form">
+              <input type="number" name="quantity" value="{{ item.quantity }}"
+                     min="1" max="{{ item.product.stock_quantity }}" />
+              <button type="submit" class="btn-small">Update</button>
+            </form>
+          </td>
+          <td>${{ "%.2f"|format(item.get_subtotal()) }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('cart.remove', cart_item_id=item.cart_item_id) }}">
+              <button type="submit" class="btn-danger-small">Remove</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="cart-summary">
+      <h3>Order Summary</h3>
+      <div class="summary-row">
+        <span>Total</span>
+        <strong>${{ "%.2f"|format(cart.get_total()) }}</strong>
+      </div>
+      <form method="POST" action="{{ url_for('orders.checkout') }}">
+        <button type="submit" class="btn-primary full-width">Place Order</button>
+      </form>
+      <a href="{{ url_for('products.index') }}" class="btn-secondary full-width">Continue Shopping</a>
+    </div>
+  </div>
+{% else %}
+  <div class="empty-state">
+    <p>Your cart is empty.</p>
+    <a href="{{ url_for('products.index') }}" class="btn-primary">Browse Instruments</a>
+  </div>
+{% endif %}
+
+{% endblock %}

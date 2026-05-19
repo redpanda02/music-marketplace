@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}My Sales · Seller Dashboard · MusicMarket{% endblock %}
+{% block content %}
+
+<div class="dashboard-header">
+  <h1>My Sales</h1>
+</div>
+<a href="{{ url_for('seller.dashboard') }}" class="btn-secondary">← Dashboard</a>
+
+{% if orders_data %}
+  <table class="order-table">
+    <thead>
+      <tr>
+        <th>Order #</th>
+        <th>Date</th>
+        <th>Customer Name</th>
+        <th>Products</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order_entry in orders_data %}
+      <tr>
+        <td>#{{ order_entry.order.order_id }}</td>
+        <td>{{ order_entry.order.order_date[:10] }}</td>
+        <td>{{ order_entry.order.customer.name }}</td>
+        <td>
+          {% for item in order_entry.order_items %}
+            {{ item.product.name }} (qty: {{ item.quantity }})<br/>
+          {% endfor %}
+        </td>
+        <td>${{ "%.2f"|format(order_entry.seller_total) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="empty-state">
+    <p>You haven't made any sales yet.</p>
+  </div>
+{% endif %}
+
+
+
+{% endblock %}

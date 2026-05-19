@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Users · Admin{% endblock %}
+{% block content %}
+
+<h1>User Management</h1>
+<a href="{{ url_for('admin.dashboard') }}" class="btn-secondary">← Dashboard</a>
+
+<table class="order-table" style="margin-top:1rem">
+  <thead>
+    <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      <td><span class="status-badge status-{{ user.role }}">{{ user.role|capitalize }}</span></td>
+      <td>
+        {% if not user.is_admin() %}
+          <form method="POST" action="{{ url_for('admin.remove_user', user_id=user.user_id) }}" style="display:inline">
+            <button type="submit" class="btn-danger-small"
+                    onclick="return confirm('Remove {{ user.name }}?')">Remove</button>
+          </form>
+        {% else %}
+          <span class="muted">—</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

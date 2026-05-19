@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, app
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import os
@@ -10,7 +10,7 @@ login_manager = LoginManager()
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
-    app.config["SECRET_KEY"] = "dev-secret-change-in-production"
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-fallback")
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(
         app.instance_path, "marketplace.db"
     )

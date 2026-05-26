@@ -26,6 +26,13 @@ class Product(db.Model):
                           nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey("category.category_id"),
                             nullable=False)
+    
+    # Music-domain specific fields (Technical Recommendation #4)
+    brand = db.Column(db.Text)  # e.g., "Fender", "Yamaha", "Ibanez"
+    model = db.Column(db.Text)  # e.g., "Stratocaster", "P-Bass"
+    condition = db.Column(db.Text, default="new")  # new | like_new | good | fair
+    is_new = db.Column(db.Integer, nullable=False, default=1)  # 1=new, 0=used
+    image_url = db.Column(db.Text)  # URL or path to product image
 
     seller = db.relationship("Seller", back_populates="products")
     category = db.relationship("Category", back_populates="products")

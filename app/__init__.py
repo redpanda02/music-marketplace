@@ -30,6 +30,12 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
+    # Import all models to register with SQLAlchemy
+    from app.models.audit import AuditLog
+    from app.models.product import Product, Category
+    from app.models.order import Order, OrderItem
+    from app.models.cart import Cart, CartItem
+
     # Register blueprints
     from app.blueprints.auth import auth_bp
     from app.blueprints.products import products_bp

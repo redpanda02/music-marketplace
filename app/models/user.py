@@ -46,6 +46,12 @@ class Seller(db.Model):
     seller_id = db.Column(db.Integer, db.ForeignKey("user.user_id"),
                           primary_key=True)
     is_approved = db.Column(db.Integer, nullable=False, default=0)  # BR-2
+    
+    # Seller reputation tracking (Technical Recommendation #4)
+    total_sales = db.Column(db.Integer, nullable=False, default=0)
+    total_rating = db.Column(db.Float, nullable=False, default=0.0)  # avg rating 0-5
+    num_reviews = db.Column(db.Integer, nullable=False, default=0)
+    joined_date = db.Column(db.Text)  # ISO format timestamp
 
     user = db.relationship("User", back_populates="seller_profile")
     products = db.relationship("Product", back_populates="seller",
